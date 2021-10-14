@@ -15,6 +15,9 @@
 			<downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
 		</li>
   </modDependencies>
+  <loadAfter>
+	<li>Cozarkian.QualityFramework</li>
+  </loadAfter>
   <description>Harvested crops and butchered meat now have a quality based on the skill of the harvesting pawn. Fine and lavish meals (including mod-added) require certain quality ingredients. Eating raw fruit will also provide taste thoughts based on the quality.
   </description>
 </ModMetaData>

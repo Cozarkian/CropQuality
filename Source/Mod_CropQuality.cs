@@ -28,10 +28,25 @@ namespace CropQuality
             Rect rect = new Rect(100f, 50f, inRect.width * .8f, inRect.height);
             listingStandard.Begin(rect);
             listingStandard.CheckboxLabeled("Pawns consider raw quality when choosing food: ", ref ModSettings_CropQuality.preferRaw);
-            string lavishLabel = "Lavish meals nutrition multiplier (vanilla = 1) (restart required): ";
-            string lavishBuffer = ModSettings_CropQuality.lavishEfficiency.ToString();
-            LabeledFloatEntry(listingStandard.GetRect(24f), lavishLabel, ref ModSettings_CropQuality.lavishEfficiency, ref lavishBuffer, 0.1f, 0.1f, .6f, 1f);
+            listingStandard.Gap();
+            string simpleLabel = "*Simple meals require ingredient quality of at least:      " + ((QualityCategory)ModSettings_CropQuality.minSimpleQuality).ToString();
+            string simpleBuffer = ModSettings_CropQuality.minSimpleQuality.ToString();
+            LabeledFloatEntry(listingStandard.GetRect(24f), simpleLabel, ref ModSettings_CropQuality.minSimpleQuality, ref simpleBuffer, 1f, 1f, 0f, 6f);
+
+            string fineLabel = "*Fine meals require ingredient quality of at least:         " + ((QualityCategory)ModSettings_CropQuality.minFineQuality).ToString();
+            string fineBuffer = ModSettings_CropQuality.minFineQuality.ToString();
+            LabeledFloatEntry(listingStandard.GetRect(24f), fineLabel, ref ModSettings_CropQuality.minFineQuality, ref fineBuffer, 1f, 1f, 0f, 6f);
+
+            string lavishLabel = "*Lavish meals require ingredient quality of at least:      " + ((QualityCategory)ModSettings_CropQuality.minLavishQuality).ToString();
+            string lavishBuffer = ModSettings_CropQuality.minLavishQuality.ToString();
+            LabeledFloatEntry(listingStandard.GetRect(24f), lavishLabel, ref ModSettings_CropQuality.minLavishQuality, ref lavishBuffer, 1f, 1f, 0f, 6f);
+
+            string effLabel = "*Lavish meals nutrition multiplier (vanilla = 1): ";
+            string effBuffer = ModSettings_CropQuality.lavishEfficiency.ToString();
+            LabeledFloatEntry(listingStandard.GetRect(24f), effLabel, ref ModSettings_CropQuality.lavishEfficiency, ref effBuffer, 0.05f, 0.1f, .5f, 1f);
+            listingStandard.Label("          (Note: Lower uses less ingredients. Efficiency of 0.55 is equivalent to simple/fine meals.)");
             listingStandard.GapLine();
+            listingStandard.Label("*Restart required");
             listingStandard.End();
             base.DoSettingsWindowContents(inRect);
         }

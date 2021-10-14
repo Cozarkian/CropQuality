@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using System.Reflection;
+using RimWorld;
 using Verse;
 using HarmonyLib;
 
@@ -7,6 +8,11 @@ namespace CropQuality
     [HarmonyPatch]
     public class QualityUtility
     {
+        static bool Prepare(MethodInfo original)
+        {
+            return !ModLister.HasActiveModWithName("Quality Framework");
+        }
+
         [HarmonyPatch(typeof(QuestManager), "Notify_PlantHarvested")]
         [HarmonyPrefix]
         public static void HarvestQuality(Pawn worker, Thing harvested)
@@ -15,8 +21,8 @@ namespace CropQuality
             if (compQuality != null && worker.skills.GetSkill(SkillDefOf.Plants) != null)
             {
                 int harvestSkill = worker.skills.GetSkill(SkillDefOf.Plants).Level;
-                bool inspired = worker.InspirationDef == DefOf_CropQuality.CQ_Inspired_Harvesting;
-                QualityCategory quality = RimWorld.QualityUtility.GenerateQualityCreatedByPawn(harvestSkill, inspired);
+                //bool inspired = worker.InspirationDef == DefOf_CropQuality.CQ_Inspired_Harvesting;
+                QualityCategory quality = RimWorld.QualityUtility.GenerateQualityCreatedByPawn(harvestSkill, false);
                 if (quality < QualityCategory.Normal && harvested.def.ingestible.preferability < FoodPreferability.RawTasty)
                     quality = QualityCategory.Normal;
                 if (quality > QualityCategory.Excellent)
@@ -29,6 +35,7 @@ namespace CropQuality
         [HarmonyPostfix]
         public static void MeatQuality(Thing product)
         {
+            //Log.Message("Meat Quality");
             if (product.def.IsMeat)
             {
                 CompQuality comp = product.TryGetComp<CompQuality>();

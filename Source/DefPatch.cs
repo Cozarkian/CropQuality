@@ -15,20 +15,22 @@ namespace CropQuality
             for (int i = 0; i < allRecipes.Count; i++)
             {
                 RecipeDef recipe = allRecipes[i];
-                if (recipe.workSkill == SkillDefOf.Cooking
-                    && recipe.ProducedThingDef != null
-                    && recipe.ProducedThingDef.ingestible != null)
+                if (recipe.workSkill == SkillDefOf.Cooking && recipe.ProducedThingDef?.ingestible != null)
                 {
                     FoodPreferability preferability = recipe.ProducedThingDef.ingestible.preferability;
+                    if (preferability == FoodPreferability.MealSimple)
+                    {
+                        range.min = (QualityCategory)ModSettings_CropQuality.minSimpleQuality;
+                    }
                     if (preferability == FoodPreferability.MealFine)
                     {
-                        range.min = QualityCategory.Good;
+                        range.min = (QualityCategory)ModSettings_CropQuality.minFineQuality;
                         recipe.fixedIngredientFilter.AllowedQualityLevels = range;
                         recipe.defaultIngredientFilter.AllowedQualityLevels = range;
                     }
                     if (preferability == FoodPreferability.MealLavish)
                     {
-                        range.min = QualityCategory.Excellent;
+                        range.min = (QualityCategory)ModSettings_CropQuality.minLavishQuality;
                         recipe.fixedIngredientFilter.AllowedQualityLevels = range;
                         recipe.defaultIngredientFilter.AllowedQualityLevels = range;
                         if (ModSettings_CropQuality.lavishEfficiency != 1)
@@ -41,11 +43,15 @@ namespace CropQuality
                     }
                 }
             }
-
+            if (ModLister.HasActiveModWithName("Quality_Framework"))
+            {
+                return;
+            }
+            ThingDef def;
             List<ThingDef> allFood = DefDatabase<ThingDef>.AllDefsListForReading;
             for (int m = 0; m < allFood.Count; m++)
             {
-                ThingDef def = allFood[m];
+                def = allFood[m];
                 CompProperties comp = new CompProperties();
                 comp.compClass = typeof(CompQuality);
                 if (def.IsMeat && !def.ingestible.IsMeal && !def.HasComp(typeof(CompQuality)))
@@ -63,31 +69,41 @@ namespace CropQuality
                         crop.BaseMarketValue = crop.BaseMarketValue * .8f;
                     }
                 }
-
             }
-
         }
-
-            /*
-            if (ModSettings_CropQuality.lavishEfficiency)
-            {
-                List<ThingDef> mealDefs = DefDatabase<ThingDef>.AllDefsListForReading;
-                for (int k = 0; k < mealDefs.Count; k++)
-                {
-                    ThingDef meal = mealDefs[k];
-                    if (meal.IsIngestible && meal.ingestible.preferability == FoodPreferability.MealLavish)
-                    {
-                        for (int l = 0; l < meal.statBases.Count; l++)
-                        {
-                            StatModifier nutrition = meal.statBases[l];
-                            if (nutrition.stat == StatDefOf.Nutrition)
-                            {
-                                nutrition.value -= .1f;
-                            }
-                        }
-                    }
-                }
-            }
-            */
     }
 }
+/*
+                    if (def.IsNutritionGivingIngestible && !def.HasComp(typeof(CompQuality)) && def.ingestible.HumanEdible)
+                    {
+                        if (def.ingestible.preferability >= FoodPreferability.RawBad && def.ingestible.preferability <= FoodPreferability.RawTasty)
+                        {
+                            def.comps.Add(comp);
+                            def.BaseMarketValue = def.BaseMarketValue * .8f;
+                        }
+                    }
+*/
+
+/*
+if (ModSettings_CropQuality.lavishEfficiency)
+{
+    List<ThingDef> mealDefs = DefDatabase<ThingDef>.AllDefsListForReading;
+    for (int k = 0; k < mealDefs.Count; k++)
+    {
+        ThingDef meal = mealDefs[k];
+        if (meal.IsIngestible && meal.ingestible.preferability == FoodPreferability.MealLavish)
+        {
+            for (int l = 0; l < meal.statBases.Count; l++)
+            {
+                StatModifier nutrition = meal.statBases[l];
+                if (nutrition.stat == StatDefOf.Nutrition)
+                {
+                    nutrition.value -= .1f;
+                }
+            }
+        }
+    }
+}
+*/
+
+

@@ -36,6 +36,8 @@ namespace CropQuality
                         thoughtDef = DefOf_CropQuality.CQ_AteGoodFood;
                         break;
                     case QualityCategory.Excellent:
+                    case QualityCategory.Masterwork:
+                    case QualityCategory.Legendary:
                         thoughtDef = DefOf_CropQuality.CQ_AteExcellentFood;
                         break;
                     default:
